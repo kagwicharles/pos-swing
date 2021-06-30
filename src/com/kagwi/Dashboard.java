@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -22,6 +23,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.UIManager;
 import javax.swing.JSpinner;
 import java.awt.Font;
@@ -145,7 +148,6 @@ public class Dashboard extends JFrame {
 		product_code.setSelectedItem("Select code...");
 		product_code.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Item changed");
 				populateOtherFields(product_code.getSelectedIndex());
 			}
 		});
@@ -176,14 +178,14 @@ public class Dashboard extends JFrame {
 		btnGenerateReceipt.setBounds(587, 560, 237, 25);
 		contentPane.add(btnGenerateReceipt);
 
-		JButton btnNewCustomer = new JButton("New Customer");
+		JButton btnNewCustomer = new JButton("New");
 		btnNewCustomer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				newCustomer();
 			}
 		});
 		btnNewCustomer.setFont(new Font("Monospaced", Font.BOLD, 16));
-		btnNewCustomer.setBounds(159, 560, 237, 25);
+		btnNewCustomer.setBounds(5, 90, 100, 25);
 		contentPane.add(btnNewCustomer);
 
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -283,6 +285,11 @@ public class Dashboard extends JFrame {
 		lblReceipt.setFont(new Font("Monospaced", Font.BOLD, 16));
 		lblReceipt.setBounds(12, 2, 326, 19);
 		panel_1.add(lblReceipt);
+
+		JButton btnSales = new JButton("Sales");
+		btnSales.setFont(new Font("Monospaced", Font.BOLD, 16));
+		btnSales.setBounds(5, 143, 100, 25);
+		contentPane.add(btnSales);
 		quantity.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -292,6 +299,7 @@ public class Dashboard extends JFrame {
 		setTitle("Dashboard");
 	}
 
+	// Method to populate product codes from api to combobox
 	public static void populateProductCodes() {
 		String[] productCodes = new String[products.size()];
 		for (int i = 0; i < products.size(); i++) {
@@ -300,29 +308,34 @@ public class Dashboard extends JFrame {
 		product_code.setModel(new DefaultComboBoxModel(productCodes));
 	}
 
+	// Populate other fields upon selecting item from combobox
 	public static void populateOtherFields(int selected) {
 		product_name.setText(products.get(selected).getProductName());
 		price.setText(products.get(selected).getProductPrice());
 		totalamount.setText(getTotalAmount(selected));
 	}
 
+	// Method returns total amount of an item entry
 	public static String getTotalAmount(int selected) {
 		Double productPrice = Double.parseDouble(products.get(selected).getProductPrice());
 		int noOfItems = (Integer) quantity.getValue();
 		return String.valueOf(productPrice * noOfItems);
 	}
 
+	// Update item total amount on changing quantity value
 	public static String updateAmount() {
 		Double productPrice = Double.parseDouble(price.getText().toString());
 		int noOfItems = (Integer) quantity.getValue();
 		return String.valueOf(productPrice * noOfItems);
 	}
 
+	// Generates receipt after completion of purchase
 	public void generateReceipt() {
-		lblNo.setText(String.valueOf(dtm.getRowCount()));
+		int itemCount = dtm.getRowCount();
 		Double sumTotal = 0.00;
 		Double totalPayable = 0.00;
 		Double vat = 10.00;
+		lblNo.setText(String.valueOf(itemCount));
 		for (int count = 0; count < dtm.getRowCount(); count++) {
 			sumTotal = sumTotal + Double.parseDouble(dtm.getValueAt(count, 3).toString());
 		}
@@ -330,9 +343,11 @@ public class Dashboard extends JFrame {
 		lblVt.setText(String.valueOf(vat));
 		totalPayable = (sumTotal - (sumTotal * 0.10)) + vat;
 		lbltotalAmnt.setText(String.valueOf(totalPayable));
+		recordSaleOption(itemCount, totalPayable, "kagwi");
 		panel_1.setVisible(true);
 	}
 
+	// Clear items table and receipt
 	public void newCustomer() {
 
 		// Loop to remove current table entries
@@ -340,5 +355,13 @@ public class Dashboard extends JFrame {
 			dtm.removeRow(0);
 		}
 		panel_1.setVisible(false);
+	}
+
+	// show alert
+	public void recordSaleOption(int itemCount, Double totalPayable, String servedBy) {
+		int result = JOptionPane.showConfirmDialog((Component) null, "Record sale!", "alert",
+				JOptionPane.OK_CANCEL_OPTION);
+		if (result == 0)
+			new HttpRequest().recordSale(itemCount, totalPayable, servedBy);
 	}
 }
