@@ -17,13 +17,14 @@ import okhttp3.Response;
 public class HttpRequest {
 
 	private final String url_products = "http://localhost:8080/POS-web/pos/Products/allProducts";
-	private final String url_sales = "http://localhost:8080/POS-web/pos/Sales/addSale";
+	private final String url_add_sales = "http://localhost:8080/POS-web/pos/Sales/addSale";
+	private final String url_get_sales = "http://localhost:8080/POS-web/pos/Sales/allSales";
 
 	private OkHttpClient client = new OkHttpClient().newBuilder().build();
 	private Response response;
 	private Request request;
 
-	//Get all products from api
+	// Get all products from api
 	public ArrayList<ProductModel> getProducts() {
 		ArrayList<ProductModel> productList = new ArrayList<>();
 		try {
@@ -47,12 +48,12 @@ public class HttpRequest {
 		return productList;
 	}
 
-	//record a sale in the api
+	// record a sale in the api
 	public void recordSale(int noOfItems, Double totalPaid, String servedBy) {
 		try {
-			MediaType mediaType = MediaType.parse("application/json");
-			RequestBody body = RequestBody.create(mediaType, jsonRequestBody(noOfItems, totalPaid, servedBy));
-			request = new Request.Builder().url(url_sales).method("POST", body).build();
+			request = new Request.Builder().url(
+					url_add_sales + "/" + String.valueOf(noOfItems) + "/" + String.valueOf(totalPaid) + "/" + servedBy)
+					.method("GET", null).build();
 			response = client.newCall(request).execute();
 			System.out.println(response.toString());
 		} catch (IOException e) {
@@ -60,16 +61,27 @@ public class HttpRequest {
 		}
 	}
 
-	public String jsonRequestBody(int noOfItems, Double totalPaid, String servedBy) {
-
-		JSONObject object = new JSONObject();
+	// Get all completed sales
+	public ArrayList<SaleModel> getSales() {
+		ArrayList<SaleModel> salesList = new ArrayList<>();
 		try {
-			object.put("NoOfItems", String.valueOf(noOfItems));
-			object.put("TotalPaid", String.valueOf(totalPaid));
-			object.put("ServedBy", servedBy);
+			request = new Request.Builder().url(url_get_sales).method("GET", null).build();
+			response = client.newCall(request).execute();
+			JSONObject jsonObj = new JSONObject(response.body().string());
+			JSONArray jsonArr = (JSONArray) jsonObj.get("Sales");
+
+			int i = jsonArr.length() - 1;
+			while (i >= 0) {
+				JSONObject jsonObjs = (JSONObject) jsonArr.get(i);
+				salesList.add(new SaleModel(jsonObjs.get("No. of items").toString(),
+						jsonObjs.get("Total paid").toString(), jsonObjs.get("Served by").toString()));
+				i--;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return object.toString();
+		return salesList;
 	}
 }

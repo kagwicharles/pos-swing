@@ -287,6 +287,19 @@ public class Dashboard extends JFrame {
 		panel_1.add(lblReceipt);
 
 		JButton btnSales = new JButton("Sales");
+		btnSales.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							new Sales().setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
 		btnSales.setFont(new Font("Monospaced", Font.BOLD, 16));
 		btnSales.setBounds(5, 143, 100, 25);
 		contentPane.add(btnSales);
