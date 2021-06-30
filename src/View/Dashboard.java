@@ -1,4 +1,4 @@
-package com.kagwi;
+package View;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -9,6 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import Model.ProductModel;
+import server.HttpRequest;
+import server.ServerNode;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -45,31 +49,14 @@ public class Dashboard extends JFrame {
 	String[] tblHead = { "Product", "Quantity", "Price", "Amount" };
 	DefaultTableModel dtm = new DefaultTableModel(tblHead, 0);
 
-	private static HttpRequest httpRequest;
+	private static ArrayList<ProductModel> productList;
+	private JComboBox product_code;
 
-	private static ArrayList<ProductModel> products;
-	private static JComboBox<ProductModel> product_code;
+	public Dashboard(ArrayList<ProductModel> products) {
+		// new ServerNode().startServer(REQUEST_PRODUCTS);
+		productList = new ArrayList<>();
+		productList = products;
 
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Dashboard frame = new Dashboard();
-					frame.setVisible(true);
-					System.out.println(httpRequest.getProducts().toString());
-					products = httpRequest.getProducts();
-					populateProductCodes();
-					populateOtherFields(0);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public Dashboard() {
-		products = new ArrayList<>();
-		httpRequest = new HttpRequest();
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1243, 650);
@@ -292,7 +279,7 @@ public class Dashboard extends JFrame {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							new Sales().setVisible(true);
+							new SalesView().setVisible(true);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -310,27 +297,31 @@ public class Dashboard extends JFrame {
 			}
 		});
 		setTitle("Dashboard");
+
+		populateProductCodes();
+		populateOtherFields(0);
 	}
 
 	// Method to populate product codes from api to combobox
-	public static void populateProductCodes() {
-		String[] productCodes = new String[products.size()];
-		for (int i = 0; i < products.size(); i++) {
-			productCodes[i] = products.get(i).getProductCode();
+	public void populateProductCodes() {
+		String[] productCodes = new String[productList.size()];
+		for (int i = 0; i < productList.size(); i++) {
+			productCodes[i] = productList.get(i).getProductCode();
+			System.out.println("Product code | " + productList.get(i).getProductCode());
 		}
 		product_code.setModel(new DefaultComboBoxModel(productCodes));
 	}
 
 	// Populate other fields upon selecting item from combobox
 	public static void populateOtherFields(int selected) {
-		product_name.setText(products.get(selected).getProductName());
-		price.setText(products.get(selected).getProductPrice());
+		product_name.setText(productList.get(selected).getProductName());
+		price.setText(productList.get(selected).getProductPrice());
 		totalamount.setText(getTotalAmount(selected));
 	}
 
 	// Method returns total amount of an item entry
 	public static String getTotalAmount(int selected) {
-		Double productPrice = Double.parseDouble(products.get(selected).getProductPrice());
+		Double productPrice = Double.parseDouble(productList.get(selected).getProductPrice());
 		int noOfItems = (Integer) quantity.getValue();
 		return String.valueOf(productPrice * noOfItems);
 	}

@@ -1,4 +1,4 @@
-package com.kagwi;
+package Model;
 
 public class SaleModel {
 

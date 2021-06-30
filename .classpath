@@ -5,5 +5,7 @@
 	<classpathentry kind="lib" path="/home/kagwi/Downloads/ok-http/okio-1.13.0.jar"/>
 	<classpathentry kind="lib" path="/home/kagwi/Downloads/ok-http/okhttp-3.9.0.jar"/>
 	<classpathentry kind="lib" path="/home/kagwi/Downloads/json/java-json.jar"/>
+	<classpathentry kind="lib" path="/home/kagwi/Downloads/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="/home/kagwi/Downloads/mysql connector/mysql-connector-java-8.0.22.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

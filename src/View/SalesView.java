@@ -1,4 +1,4 @@
-package com.kagwi;
+package View;
 
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
@@ -9,10 +9,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import Model.SaleModel;
+import server.HttpRequest;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-public class Sales extends JFrame {
+public class SalesView extends JFrame {
 
 	private JPanel contentPane;
 	private JTable table;
@@ -22,7 +26,7 @@ public class Sales extends JFrame {
 
 	private ArrayList<SaleModel> sales;
 
-	public Sales() {
+	public SalesView() {
 		sales = new ArrayList<SaleModel>();
 		sales = new HttpRequest().getSales();
 		populateSales();
@@ -41,6 +45,7 @@ public class Sales extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
+	// Fill sales table
 	public void populateSales() {
 		int i = 0;
 		while (i != sales.size()) {

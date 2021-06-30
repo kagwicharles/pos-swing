@@ -1,4 +1,4 @@
-package com.kagwi;
+package server;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,17 +7,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import okhttp3.FormBody;
-import okhttp3.MediaType;
+import Model.ProductModel;
+import Model.SaleModel;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class HttpRequest {
 
-	private final String url_products = "http://localhost:8080/POS-web/pos/Products/allProducts";
-	private final String url_add_sales = "http://localhost:8080/POS-web/pos/Sales/addSale";
+	public HttpRequest() {
+	}
+
+	public static String url = "http://localhost:9000";
 	private final String url_get_sales = "http://localhost:8080/POS-web/pos/Sales/allSales";
 
 	private OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -28,10 +29,10 @@ public class HttpRequest {
 	public ArrayList<ProductModel> getProducts() {
 		ArrayList<ProductModel> productList = new ArrayList<>();
 		try {
-			request = new Request.Builder().url(url_products).method("GET", null).build();
+			request = new Request.Builder().url(url).method("GET", null).build();
 			response = client.newCall(request).execute();
 			JSONObject jsonObj = new JSONObject(response.body().string());
-			JSONArray jsonArr = (JSONArray) jsonObj.get("Stock");
+			JSONArray jsonArr = (JSONArray) jsonObj.get("Product");
 
 			int i = jsonArr.length() - 1;
 			while (i >= 0) {
@@ -42,6 +43,7 @@ public class HttpRequest {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println("Bind exception caught here");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -51,8 +53,8 @@ public class HttpRequest {
 	// record a sale in the api
 	public void recordSale(int noOfItems, Double totalPaid, String servedBy) {
 		try {
-			request = new Request.Builder().url(
-					url_add_sales + "/" + String.valueOf(noOfItems) + "/" + String.valueOf(totalPaid) + "/" + servedBy)
+			request = new Request.Builder()
+					.url(url + "/" + String.valueOf(noOfItems) + "/" + String.valueOf(totalPaid) + "/" + servedBy)
 					.method("GET", null).build();
 			response = client.newCall(request).execute();
 			System.out.println(response.toString());
