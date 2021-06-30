@@ -16,7 +16,7 @@ import okhttp3.Response;
 
 public class HttpRequest {
 
-	private final String url_products = "http://localhost:8080/POS-web/pos/allProducts";
+	private final String url_products = "http://localhost:8080/POS-web/pos/Products/allProducts";
 	private final String url_sales = "http://localhost:8080/POS-web/pos/Sales/addSale";
 
 	private OkHttpClient client = new OkHttpClient().newBuilder().build();
