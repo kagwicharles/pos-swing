@@ -28,7 +28,6 @@ public class SalesView extends JFrame {
 
 	public SalesView() {
 		sales = new ArrayList<SaleModel>();
-		sales = new HttpRequest().getSales();
 		populateSales();
 		setBounds(100, 100, 700, 310);
 		contentPane = new JPanel();

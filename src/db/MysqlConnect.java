@@ -11,8 +11,8 @@ public class MysqlConnect {
 	private String db = "javapos"; // Database name
 	private final String url = "jdbc:mysql://" + host + "/" + db + "?"
 			+ "useSSL=true&verifyServerCertificate=false&serverTimezone=UTC"; // Database url
-	private final String user = "kagwi"; // Database user
-	private final String password = "ckagwi"; // Database pass
+	private final String user = "kagwicharles"; // Database user
+	private final String password = "kagwi"; // Database pass
 
 	public MysqlConnect() {
 

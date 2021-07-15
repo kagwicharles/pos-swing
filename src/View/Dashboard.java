@@ -12,7 +12,6 @@ import javax.swing.table.DefaultTableModel;
 
 import Model.ProductModel;
 import server.HttpRequest;
-import server.ServerNode;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -53,7 +52,6 @@ public class Dashboard extends JFrame {
 	private JComboBox product_code;
 
 	public Dashboard(ArrayList<ProductModel> products) {
-		// new ServerNode().startServer(REQUEST_PRODUCTS);
 		productList = new ArrayList<>();
 		productList = products;
 
