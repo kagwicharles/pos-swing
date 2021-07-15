@@ -363,7 +363,9 @@ public class Dashboard extends JFrame {
 	public void recordSaleOption(int itemCount, Double totalPayable, String servedBy) {
 		int result = JOptionPane.showConfirmDialog((Component) null, "Record sale!", "alert",
 				JOptionPane.OK_CANCEL_OPTION);
-		if (result == 0)
+		if (result == 0) {
 			new HttpRequest().recordSale(itemCount, totalPayable, servedBy);
+			dispose();
+		}
 	}
 }

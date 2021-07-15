@@ -24,6 +24,8 @@ import db.Sales;
 
 public class MyServer {
 
+	private static Dashboard dashboard;
+
 	public static void main(String[] args) throws Exception {
 		HttpServer server = HttpServer.create(new InetSocketAddress(9000), 0);
 		server.createContext("/products", new MyHandler());
@@ -58,7 +60,8 @@ public class MyServer {
 				t.sendResponseHeaders(200, response.length());
 				OutputStream os = t.getResponseBody();
 				os.write(response.getBytes());
-				new Dashboard(populateDashboard(response)).setVisible(true);
+				dashboard = new Dashboard(populateDashboard(response));
+				openUI();
 				os.close();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
@@ -66,6 +69,10 @@ public class MyServer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void openUI() {
+		dashboard.setVisible(true);
 	}
 
 	public static ArrayList<ProductModel> populateDashboard(String res) {
